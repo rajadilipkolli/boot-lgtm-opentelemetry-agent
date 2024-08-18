@@ -1,4 +1,4 @@
-# Spring Boot 3.2 Project template with LGTM stack
+# Spring Boot 3.3 Project template with LGTM stack
 
 Spring Boot project template with OpenTelemetry and LGTM stack.
 

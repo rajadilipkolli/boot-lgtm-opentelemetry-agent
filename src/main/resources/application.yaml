@@ -10,7 +10,7 @@ spring:
     password: secret
   docker:
     compose:
-      enabled: false # Enable if you use Docker Compose - I use Podman Compose
+      enabled: true
 
   threads:
     virtual:
