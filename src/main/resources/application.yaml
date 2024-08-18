@@ -1,0 +1,33 @@
+server:
+  shutdown: graceful
+
+spring:
+  application:
+    name: coupon
+  datasource:
+    url: jdbc:postgresql://localhost:5432/coupon
+    username: myuser
+    password: secret
+  docker:
+    compose:
+      enabled: false # Enable if you use Docker Compose - I use Podman Compose
+
+  threads:
+    virtual:
+      enabled: true # Starting since SB 3.2
+
+  sql:
+    init:
+      mode: always # Please note that this is for development only
+  mvc:
+    problemdetails:
+      enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics"
+logging:
+  level:
+    dev.tpcoder.coupon: debug
