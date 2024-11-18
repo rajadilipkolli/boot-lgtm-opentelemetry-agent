@@ -19,6 +19,9 @@ Blog EN: [Spring Boot 3.3 + OpenTelemetry (Agent) with otel-lgtm](https://medium
 
 ## Dashboard from otel-lgtm container
 
+Grafana - http://localhost:3000
+
+
 ### JVM Overview (OpenTelemetry)
 
 ![img.png](images/img_5.png)
