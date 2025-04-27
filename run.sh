@@ -2,7 +2,13 @@
 
 set -euo pipefail
 
-./gradlew clean build
+# Check if we should skip the build step
+if [ "$#" -gt 0 ] && [ "$1" = "--skip-build" ]; then
+  echo "Skipping build step..."
+else
+  echo "Building the application..."
+  ./gradlew clean build
+fi
 
 export OTEL_RESOURCE_ATTRIBUTES="service.name=coupon,service.instance.id=localhost:8080"
 export OTEL_LOGS_EXPORTER="otlp"

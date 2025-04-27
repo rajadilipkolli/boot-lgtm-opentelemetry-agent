@@ -1,0 +1,164 @@
+version: '3'
+
+vars:
+  GOOS: "{{OS}}"
+  GRADLEW: '{{if eq .GOOS "windows"}}gradlew.bat{{else}}./gradlew{{end}}'
+  SLEEP_CMD: '{{if eq .GOOS "windows"}}timeout /t{{else}}sleep{{end}}'
+  IMAGE_NAME: 'coupon-lgtm'
+  DC_FILE: 'compose-local.yaml'
+
+tasks:
+  default:
+    cmds:
+      - task: test
+  
+  test:
+    cmds:
+      - "{{.GRADLEW}} build"
+
+  build:
+    desc: Build the application
+    cmds:
+      - "{{.GRADLEW}} build"
+  
+  format:
+    cmds:
+      - "{{.GRADLEW}} spotlessApply"
+
+  build_image:
+    cmds:
+      - "{{.GRADLEW}} -x test bootBuildImage --imageName={{.IMAGE_NAME}}"
+
+  start:
+    deps: [ build_image ]
+    cmds:
+      - docker compose --profile app -f {{.DC_FILE}} up --force-recreate -d
+
+  stop:
+    cmds:
+      - docker compose --profile app -f {{.DC_FILE}} stop
+      - docker compose --profile app -f {{.DC_FILE}} rm -f
+
+  restart:
+    cmds:
+      - task: stop
+      - task: sleep
+      - task: start
+
+  sleep:
+    vars:
+      DURATION: '{{default "5" .DURATION}}'
+    cmds:
+      - '{{if eq .GOOS "windows"}}timeout /t {{.DURATION}} > NUL{{else}}sleep {{.DURATION}}{{end}}'
+
+  run-local:
+    desc: Run the application locally with OpenTelemetry agent
+    deps: [ensure-agent]
+    vars:
+      SKIP_BUILD: '{{default "false" .SKIP_BUILD}}'
+      RUN_CMD: '{{if eq .GOOS "windows"}}cmd /c start cmd /c run.bat {{if eq .SKIP_BUILD "true"}}--skip-build{{end}}{{else}}bash run.sh {{if eq .SKIP_BUILD "true"}}--skip-build{{end}} &{{end}}'
+    cmds:
+      - echo Running application with OpenTelemetry agent...
+      - '{{.RUN_CMD}}'
+      - '{{if ne .GOOS "windows"}}echo "Waiting for application to start..." && sleep 3{{end}}'
+
+  verify-otel:
+    desc: Verify OpenTelemetry agent is working
+    cmds:
+      - echo Checking OpenTelemetry collector endpoints...
+      - '{{if eq .GOOS "windows"}}curl -s -o NUL -w "OTLP HTTP Status: %%{http_code}\n" http://localhost:4318/v1/metrics || echo OTLP HTTP endpoint not reachable{{else}}curl -s -o /dev/null -w "OTLP HTTP Status: %{http_code}\n" http://localhost:4318/v1/metrics || echo OTLP HTTP endpoint not reachable{{end}}'
+      - echo Checking Grafana...
+      - '{{if eq .GOOS "windows"}}curl -s -o NUL -w "Grafana Status: %%{http_code}\n" http://localhost:3000/ || echo Grafana not reachable{{else}}curl -s -o /dev/null -w "Grafana Status: %{http_code}\n" http://localhost:3000/ || echo Grafana not reachable{{end}}'
+    
+  ensure-agent:
+    desc: Ensure OpenTelemetry agent jar exists
+    cmds:
+      - echo Ensuring OpenTelemetry agent exists...
+      - |
+        {{if eq .GOOS "windows"}}
+        powershell -Command "
+          if (-not (Test-Path 'build\agent\opentelemetry-javaagent.jar')) {
+            Write-Host 'Creating agent directory...'
+            if (-not (Test-Path 'build\agent')) { 
+              New-Item -Path 'build\agent' -ItemType Directory | Out-Null 
+            }
+            Write-Host 'Downloading OpenTelemetry agent...'
+            Invoke-WebRequest -Uri 'https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.15.0/opentelemetry-javaagent.jar' -OutFile 'build\agent\opentelemetry-javaagent.jar'
+          } else {
+            Write-Host 'OpenTelemetry agent already exists.'
+          }
+        "
+        {{else}}
+        if [ ! -f "build/agent/opentelemetry-javaagent.jar" ]; then
+          echo "Creating agent directory..."
+          mkdir -p build/agent
+          echo "Downloading OpenTelemetry agent..."
+          curl -L https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.15.0/opentelemetry-javaagent.jar -o build/agent/opentelemetry-javaagent.jar
+        else
+          echo "OpenTelemetry agent already exists."
+        fi
+        {{end}}
+    
+  infra-start:
+    desc: Start only the infrastructure (no application)
+    cmds:
+      - docker compose -f {{.DC_FILE}} up -d
+    
+  infra-stop:
+    desc: Stop the infrastructure
+    cmds:
+      - docker compose -f {{.DC_FILE}} stop
+      - docker compose -f {{.DC_FILE}} rm -f
+      
+  check-app-health:
+    desc: Check if the application is running and responding
+    cmds:
+      - echo Checking if application is healthy...
+      - |
+        {{if eq .GOOS "windows"}}
+        powershell -File check-app-health.ps1
+        {{else}}
+        bash -c '
+        count=0
+        max=30
+        delay=2
+        echo "Starting application health check..."
+        while [ $count -lt $max ]; do
+          count=$((count+1))
+          echo "Attempt $count/$max: Checking application health..."
+          if curl -s -f http://localhost:8080/actuator/health > /dev/null; then
+            echo "Application is healthy!"
+            exit 0
+          else
+            echo "Application not ready yet, waiting..."
+            sleep $delay
+          fi
+        done
+        echo "Application health check failed after $max attempts"
+        exit 1
+        '
+        {{end}}
+      
+  generate-traffic:
+    desc: Generate test traffic to validate telemetry
+    cmds:
+      - task: check-app-health
+      - '{{if eq .GOOS "windows"}}powershell -File generate-traffic.ps1{{else}}bash generate-traffic.sh{{end}}'
+    
+  full-test:
+    desc: Full test cycle including infrastructure, application and traffic generation
+    cmds:
+      - task: build
+      - task: infra-start
+      - echo Starting infrastructure components...
+      - task: sleep
+        vars:
+          DURATION: '10'
+      - echo Starting application with OpenTelemetry agent...
+      - task: run-local
+        vars:
+          SKIP_BUILD: 'true'
+      - echo Waiting for application to initialize...
+      - task: check-app-health
+      - echo Application is ready! Starting traffic generation...
+      - task: generate-traffic

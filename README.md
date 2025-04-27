@@ -1,4 +1,4 @@
-# Spring Boot 3.3 Project template with LGTM stack
+# Spring Boot 3.4 Project template with LGTM stack
 
 Spring Boot project template with OpenTelemetry and LGTM stack.
 
@@ -8,7 +8,7 @@ Blog EN: [Spring Boot 3.3 + OpenTelemetry (Agent) with otel-lgtm](https://medium
 
 ## Tech Stack
 
-* Spring Boot 3.3 
+* Spring Boot 3.4 
 * Java 21 
 * Gradle 
 * PostgreSQL 
