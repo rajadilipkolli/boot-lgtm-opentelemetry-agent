@@ -39,7 +39,7 @@ dependencies {
 
 dependencyManagement {
     imports {
-        mavenBom("io.opentelemetry:opentelemetry-bom:1.49.0")
+        mavenBom("io.opentelemetry:opentelemetry-bom:1.50.0")
         mavenBom("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:2.15.0")
     }
 }
