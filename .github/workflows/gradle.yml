@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        distribution: [ 'temurin' ]
+        distribution: [ 'zulu' ]
         java: [ '25' ]
     steps:
       - uses: actions/checkout@v5
@@ -30,3 +30,4 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build
+
