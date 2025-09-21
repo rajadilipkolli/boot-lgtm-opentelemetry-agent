@@ -62,3 +62,8 @@ tasks.named('bootJar') {
     dependsOn(copyAgent)
     archiveFileName = "app.jar"
 }
+
+configurations.all {
+ resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+ resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
+}
