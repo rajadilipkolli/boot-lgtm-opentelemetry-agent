@@ -1,4 +1,4 @@
-package dev.tpcoder.coupon;
+package dev.tpcoder.coupon.model;
 
 public enum Operator {
     DISCOUNT

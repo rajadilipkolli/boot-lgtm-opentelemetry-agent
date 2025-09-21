@@ -1,4 +1,4 @@
-package dev.tpcoder.coupon;
+package dev.tpcoder.coupon.config;
 
 import dev.tpcoder.coupon.exception.FakeInternalException;
 import dev.tpcoder.coupon.exception.NotFoundException;
