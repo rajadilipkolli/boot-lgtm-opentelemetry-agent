@@ -11,6 +11,7 @@ spring:
   docker:
     compose:
       enabled: true
+      file: ./compose-local.yaml
 
   threads:
     virtual:

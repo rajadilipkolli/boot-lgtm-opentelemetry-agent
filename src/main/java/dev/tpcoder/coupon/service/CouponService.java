@@ -2,19 +2,21 @@ package dev.tpcoder.coupon.service;
 
 import dev.tpcoder.coupon.exception.NotFoundException;
 import dev.tpcoder.coupon.model.Coupon;
-import dev.tpcoder.coupon.respository.CouponRepository;
+import dev.tpcoder.coupon.repository.CouponRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class CouponService {
 
-    private final Logger logger = LoggerFactory.getLogger(CouponService.class);
+    private static final Logger logger = LoggerFactory.getLogger(CouponService.class);
 
     private final CouponRepository couponRepository;
 
@@ -35,6 +37,7 @@ public class CouponService {
                 .orElseThrow(() -> new NotFoundException("Invalid id: %d".formatted(id)));
     }
 
+    @Transactional
     public Coupon saveCoupon(Coupon coupon) {
         logger.debug("Saving coupon: {}", coupon);
         var newlyCoupon = couponRepository.save(coupon);
@@ -42,6 +45,7 @@ public class CouponService {
         return newlyCoupon;
     }
 
+    @Transactional
     public void deleteCoupon(Long id) {
         logger.debug("Deleting coupon by id: {}", id);
         var coupon = couponRepository.findById(id)
