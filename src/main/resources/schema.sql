@@ -8,3 +8,5 @@ CREATE TABLE IF NOT EXISTS coupon
     operator    VARCHAR(10),
     value       DOUBLE PRECISION NOT NULL
 );
+
+CREATE INDEX IF NOT EXISTS idx_coupon_dates ON coupon (start_date, end_date);

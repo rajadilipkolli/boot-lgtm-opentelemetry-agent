@@ -13,5 +13,6 @@ import java.util.List;
 public interface CouponRepository extends CrudRepository<Coupon, Long> {
 
     @Query("SELECT * FROM coupon WHERE start_date <= :startDate AND end_date >= :endDate")
-    List<Coupon> findActiveCoupons(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+    List<Coupon> findActiveCoupons(@Param("startDate") LocalDateTime startDate,
+                                   @Param("endDate") LocalDateTime endDate);
 }
