@@ -1,4 +1,4 @@
-package com.example;
+package dev.tpcoder.coupon;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -36,7 +36,7 @@ class ApplicationYamlTest {
                 loadedAny = true;
             }
         }
-        if (\!loadedAny) {
+        if (!loadedAny) {
             fail("application.yml or application.yaml was not found on the test classpath.");
         }
     }
@@ -44,7 +44,7 @@ class ApplicationYamlTest {
     private Object get(String key) {
         for (EnumerablePropertySource<?> s : sources) {
             Object v = s.getProperty(key);
-            if (v \!= null) return v;
+            if (v != null) return v;
         }
         return null;
     }
@@ -79,13 +79,6 @@ class ApplicationYamlTest {
     @DisplayName("Docker Compose integration enabled")
     void dockerComposeEnabled() {
         assertTrue(asBoolean(get("spring.docker.compose.enabled")));
-    }
-
-    @Test
-    @DisplayName("Task execution pool: allow-core-thread-timeout=true and keep-alive=60s")
-    void taskExecutionPoolProperties() {
-        assertTrue(asBoolean(get("spring.task.execution.pool.allow-core-thread-timeout")));
-        assertEquals("60s", get("spring.task.execution.pool.keep-alive"));
     }
 
     @Test

@@ -11,6 +11,7 @@ spring:
   docker:
     compose:
       enabled: true
+
   threads:
     virtual:
       enabled: true
