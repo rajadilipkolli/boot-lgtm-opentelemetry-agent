@@ -11,11 +11,6 @@ spring:
   docker:
     compose:
       enabled: true
-  task:
-    execution:
-      pool:
-        allow-core-thread-timeout: true
-        keep-alive: 60s
   threads:
     virtual:
       enabled: true
