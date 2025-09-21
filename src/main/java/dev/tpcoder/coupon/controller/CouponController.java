@@ -1,6 +1,9 @@
-package dev.tpcoder.coupon;
+package dev.tpcoder.coupon.controller;
 
 import dev.tpcoder.coupon.exception.FakeInternalException;
+import dev.tpcoder.coupon.model.Coupon;
+import dev.tpcoder.coupon.service.CouponService;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

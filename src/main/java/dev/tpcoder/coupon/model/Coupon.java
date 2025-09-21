@@ -1,4 +1,4 @@
-package dev.tpcoder.coupon;
+package dev.tpcoder.coupon.model;
 
 import org.springframework.data.annotation.Id;
 

@@ -1,6 +1,9 @@
-package dev.tpcoder.coupon;
+package dev.tpcoder.coupon.service;
 
 import dev.tpcoder.coupon.exception.NotFoundException;
+import dev.tpcoder.coupon.model.Coupon;
+import dev.tpcoder.coupon.respository.CouponRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -11,12 +14,11 @@ import java.util.List;
 @Service
 public class CouponService {
 
-    private final Logger logger;
+    private final Logger logger = LoggerFactory.getLogger(CouponService.class);
 
     private final CouponRepository couponRepository;
 
     public CouponService(CouponRepository couponRepository) {
-        this.logger = LoggerFactory.getLogger(CouponService.class);
         this.couponRepository = couponRepository;
     }
 

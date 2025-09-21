@@ -1,5 +1,6 @@
-package dev.tpcoder.coupon;
+package dev.tpcoder.coupon.respository;
 
+import dev.tpcoder.coupon.model.Coupon;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
