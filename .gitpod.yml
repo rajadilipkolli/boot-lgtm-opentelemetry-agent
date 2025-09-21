@@ -9,4 +9,6 @@ image: gitpod/workspace-java-21
 tasks:
   - init: ./gradlew build
 
-
+ports:
+  - port: 8080
+    visibility: public
