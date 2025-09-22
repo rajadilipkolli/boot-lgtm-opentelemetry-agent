@@ -25,7 +25,7 @@ configurations {
 
 dependencies {
     implementation("io.opentelemetry:opentelemetry-api")
-    agent("io.opentelemetry.javaagent:opentelemetry-javaagent:2.20.0")
+    agent("io.opentelemetry.javaagent:opentelemetry-javaagent:2.20.1")
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
