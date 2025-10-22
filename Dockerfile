@@ -1,4 +1,4 @@
-FROM azul/zulu-openjdk-alpine:25-jre
+FROM azul/zulu-openjdk-alpine:25.0.1-jre
 WORKDIR /app
 
 ADD build/libs/app.jar app.jar
