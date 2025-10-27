@@ -6,7 +6,7 @@ import dev.tpcoder.coupon.config.TestContainerConfig;
 
 public class TestCouponApplication {
 
-	public static void main(String[] args) {
+	static void main(String[] args) {
 		SpringApplication.from(CouponApplication::main)
 				.with(TestContainerConfig.class)
 				.run(args);
